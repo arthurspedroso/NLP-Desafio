@@ -1,0 +1,8 @@
+docling
+pytesseract
+pdf2image
+requests
+psycopg2-binary
+sqlalchemy
+python-dotenv
+Pillow
