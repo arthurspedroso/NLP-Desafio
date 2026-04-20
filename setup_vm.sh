@@ -7,9 +7,6 @@ sudo apt update
 echo "=== Instalando dependencias do sistema ==="
 sudo apt install -y tesseract-ocr tesseract-ocr-por poppler-utils git python3-pip
 
-echo "=== Clonando repositorio ==="
-git clone <URL_DO_REPO>
-cd api-rag
 
 echo "=== Instalando dependencias Python ==="
 pip install -r requirements-etl.txt
