@@ -1,0 +1,495 @@
+{
+  "2016-12-31": {
+    "status": "Nenhum registro encontrado.",
+    "registros": []
+  },
+  "2016-12-30": {
+    "status": "23 registro(s).",
+    "registros": [
+      {
+        "numeracaoItem": "1.",
+        "titulo": "DSP - DESPACHO 3284/2016",
+        "autor": "ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:15/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Acatamento",
+        "ementa": null,
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163284.pdf",
+            "arquivo": "dsp20163284.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "2.",
+        "titulo": "DSP - DESPACHO 3386/2016",
+        "autor": "SCG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:26/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Registro",
+        "ementa": "Registra a adequabilidade aos estudos de inventário e ao uso do potencial hidráulico da Pequena Central Hidrelétrica São Carlos, no rio do Peixe, nos municípios de Lacerdópolis e Campos Novos, (SC), de titularidade da Getop Empreendimentos e Gestão Ltda, Neimar Brusamarello e da São Carlos Energia Ltda. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163386ti.pdf",
+            "arquivo": "dsp20163386ti.pdf",
+            "baixado": true
+          },
+          {
+            "tipo": "Nota Técnica nº 951/2016-SCG/ANEEL       :",
+            "url": "http://www2.aneel.gov.br/cedoc/ndsp20163386.pdf",
+            "arquivo": "ndsp20163386.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "3.",
+        "titulo": "DSP - DESPACHO 3398/2016",
+        "autor": "SCG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Determinação",
+        "ementa": "Resolve hierarquizar, em primeiro lugar, a Tradener Ltda, Norma Santinoni Vera, Francisco Manoel da Rocha Pombo Vera Filho, Nivaldo de Paula Ribeiro e Maria José Ribeiro, como interessados na implantação e exploração da Pequena Central Hidrelétrica COR 125; e revoga o Despacho SCG/ANEEL 4.471, de 18.11.2014, que conferiu o registro ativo ao projeto básico da Pequena Central Hidrelétrica COR 125 apresentado por Optigera S.A, VOTENER - Votorantim Comercializadora de Energia Ltda, Lemos Construções Transportes Areia e Cascalho Ltda, Wender Carlos de Abreu, Weidiany Lucia de Abreu, Leonardo Carneiro Rincón, Luciano Alberto Ribeiro e Carolyna Porto. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163398ti.pdf",
+            "arquivo": "dsp20163398ti.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "4.",
+        "titulo": "DSP - DESPACHO 3399/2016",
+        "autor": "SCG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Registro",
+        "ementa": "Registra a adequabilidade aos estudos de inventário e ao uso do potencial hidráulico da Pequena Central Hidrelétrica COR 125, no rio Corumbá, nos municípios de Pires do Rio e Urutaí, (GO), de titularidade da Tradener Ltda, Norma Santinoni Vera, Francisco Manoel da Rocha Vera Filho, Nivaldo de Paula Ribeiro e de Maria José Ribeiro. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163399ti.pdf",
+            "arquivo": "dsp20163399ti.pdf",
+            "baixado": true
+          },
+          {
+            "tipo": "Nota Técnica nº 955/2016-SCG/ANEEL       :",
+            "url": "http://www2.aneel.gov.br/cedoc/ndsp20163399.pdf",
+            "arquivo": "ndsp20163399.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "5.",
+        "titulo": "DSP - DESPACHO 3400/2016",
+        "autor": "SFF/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Conhecimento",
+        "ementa": "Conhece e, no mérito, reconsidera parcialmente do recurso administrativo da Boa Vista Energia S.A, em face do Auto de Infração SFF/ANEEL 051, de 2016, para reduzir o valor da multa; converter a penalidade de multa referente às Não Conformidades 3, 8, 11, 12, 13, 14, 21 e 22 em advertência; e encaminha o recurso à Diretoria Colegiada, para decisão em instância superior. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163400ti.pdf",
+            "arquivo": "dsp20163400ti.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "6.",
+        "titulo": "DSP - DESPACHO 3407/2016",
+        "autor": "SCG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:REVOGADA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Registro",
+        "ementa": "Confere à Agrícola Sete Campos Ltda, o registro de intenção à outorga de autorização referente à Pequena Central Hidrelétrica Eixo 1, no ribeirão do Salto, nos municípios de Novo Jardim e Ponte Alta do Bom Jesus, (TO). Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163407ti.pdf",
+            "arquivo": "dsp20163407ti.pdf",
+            "baixado": true
+          },
+          {
+            "tipo": "Decisão Judicial :",
+            "url": "https://www2.aneel.gov.br/cedoc/Decis%C3%A3o_Judicial.pdf",
+            "arquivo": "Decis%C3%A3o_Judicial.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "7.",
+        "titulo": "DSP - DESPACHO 3408/2016",
+        "autor": "SCG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Registro",
+        "ementa": "Registra a adequabilidade aos estudos de inventário e ao uso do potencial hidráulico da Pequena Central Hidrelétrica Cachoeira Alegre, no rio Pomba, no município de Santo Antônio de Pádua, (RJ), de titularidade da Rodrigo Pedroso Energia Ltda. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163408ti.pdf",
+            "arquivo": "dsp20163408ti.pdf",
+            "baixado": true
+          },
+          {
+            "tipo": "Nota Técnica nº 958/2016-SCG/ANEEL:",
+            "url": "http://www2.aneel.gov.br/cedoc/ndsp20163408.pdf",
+            "arquivo": "ndsp20163408.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "8.",
+        "titulo": "DSP - DESPACHO 3409/2016",
+        "autor": "SCG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Fixação",
+        "ementa": "Estabelece o percentual de redução, a ser aplicado às tarifas de uso dos sistemas elétricos de transmissão e de distribuição - TUSD e TUST, incidindo na produção e no consumo da energia comercializada pelas Usinas Hidrelétricas Juba I e Juba II, nos municípios de Tangará da Serra e Barra dos Bugres, (MT), outorgada à Itamarati Norte S.A Agropecuária. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163409ti.pdf",
+            "arquivo": "dsp20163409ti.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "9.",
+        "titulo": "DSP - DESPACHO 3410/2016",
+        "autor": "SFF/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Conhecimento",
+        "ementa": "Conhece e, no mérito, reconsidera parcialmente do recurso administrativo da Companhia Energética do Piauí S.A - CEPISA, em face do Auto de Infração SFF/ANEEL 050, de 2016, para reduzir o valor da multa; converter a penalidade de multa referente às Não Conformidades 5, 9, 10, 11 e 19 em advertência; cancela as Não Conformidades 4, 12, 13, 14, 21 e 24; e encaminha o recurso à Diretoria Colegiada, para decisão em instância superior. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral :",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163410ti.pdf",
+            "arquivo": "dsp20163410ti.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "10.",
+        "titulo": "DSP - DESPACHO 3411/2016",
+        "autor": "SFF/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Aprovação",
+        "ementa": "Aprova a liberação de recursos da Conta de Desenvolvimento Energético - CDE, para a Light Serviços de Eletricidade S.A, conforme fluxo financeiro do orçamento, correspondente à 8º parcela das obras do Cluster Barra da Tijuca, para os serviços de fornecimento de energia temporária para os Jogos Olímpicos e Paralímpicos de 2016. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163411.pdf",
+            "arquivo": "dsp20163411.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "11.",
+        "titulo": "DSP - DESPACHO 3415/2016",
+        "autor": "SGT/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Fixação",
+        "ementa": "Fixa os valores da conta centralizadora dos recursos de bandeiras tarifárias, para fins da liquidação das operações do mercado de curto prazo junto à Câmara de Comercialização de Energia Elétrica - CCEE, referente à contabilização de novembro de 2016. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163415ti.pdf",
+            "arquivo": "dsp20163415ti.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "12.",
+        "titulo": "DSP - DESPACHO 3416/2016",
+        "autor": "SFG/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Liberação",
+        "ementa": "Libera a unidade geradora UG6-Pimental, para início da operação em teste, da Usina Hidrelétrica Belo Monte, no rio Xingu, no município de Vitória do Xingu, (PA), de titularidade da Norte Energia S.A. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/dsp20163416ti.pdf",
+            "arquivo": "dsp20163416ti.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "13.",
+        "titulo": "PRT - PORTARIA 267/2016",
+        "autor": "SPE/MME",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Aprovação",
+        "ementa": "Aprova como prioritário o projeto da Central Geradora Eólio-elétrica Pedra Cheirosa II, no município de Itarema, (CE), de titularidade da Pedra Cheirosa II Energia S.A. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt2016267spde.pdf",
+            "arquivo": "prt2016267spde.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "14.",
+        "titulo": "PRT - PORTARIA 268/2016",
+        "autor": "SPE/MME",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Aprovação",
+        "ementa": "Aprova como prioritário o projeto da Central Geradora Eólio-elétrica Pedra Cheirosa, no município de Itarema, (CE), de titularidade da Pedra Cheirosa I Energia S.A. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt2016268spde.pdf",
+            "arquivo": "prt2016268spde.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "15.",
+        "titulo": "PRT - PORTARIA 269/2016",
+        "autor": "SPE/MME",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:28/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Aprovação",
+        "ementa": "Aprova como prioritário o projeto da Central Geradora Eólio-elétrica Assuruá III, no município de Gentio do Ouro, (BA), de titularidade da Parque Eólico Assuruá III S.A. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt2016269spde.pdf",
+            "arquivo": "prt2016269spde.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "16.",
+        "titulo": "PRT - PORTARIA 270/2016",
+        "autor": "SPE/MME",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Aprovação",
+        "ementa": "Aprova o enquadramento do projeto de reforços em instalações de transmissão de energia elétrica, no estado de Goiás, de titularidade da Celg Geração e Transmissão S.A, no Regime Especial de Incentivos para o Desenvolvimento da Infraestrutura - REIDI, conforme condições em Anexo. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt2016270spde.pdf",
+            "arquivo": "prt2016270spde.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "17.",
+        "titulo": "PRT - PORTARIA 4363/2016",
+        "autor": "SAF/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Designação",
+        "ementa": null,
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164363.pdf",
+            "arquivo": "prt20164363.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "18.",
+        "titulo": "PRT - PORTARIA 4374/2016",
+        "autor": "SAF/SGI/SLC/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:REVOGADA",
+        "assinatura": "Assinatura:19/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Designação",
+        "ementa": "Designa Fábio Araújo Cruz, como gestor do Contrato ANEEL 146 de 2016, tendo como substituto Adriana de Carvalho Drummond Vivan, além dos servidores relacionados como fiscais das suas respectivas áreas de atuação. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164374.pdf",
+            "arquivo": "prt20164374.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "19.",
+        "titulo": "PRT - PORTARIA 4380/2016",
+        "autor": "SRH/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:26/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Licença",
+        "ementa": "Concede ao servidor João Francisco Darlei da Silva Pereira, da ANEEL, licença para capacitação, pelo período de noventa dias contados a partir de 09.01.2017. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164380.pdf",
+            "arquivo": "prt20164380.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "20.",
+        "titulo": "PRT - PORTARIA 4381/2016",
+        "autor": "SFF/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:27/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Exoneração",
+        "ementa": "Exonera Antônio Araújo da Silva da atribuição de gestor substituto dos Contratos ANEEL 029 e 032 de 2016; e designa Ed Wilson A. Gonçalves, como gestor substituto dos contratos citados, geridos pela Superintendência de Superintendente de Fiscalização Econômica e Financeira. Imprimir",
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164381.pdf",
+            "arquivo": "prt20164381.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "21.",
+        "titulo": "PRT - PORTARIA 4383/2016",
+        "autor": "SRH/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:27/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Licença",
+        "ementa": null,
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164383.pdf",
+            "arquivo": "prt20164383.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "22.",
+        "titulo": "PRT - PORTARIA 4384/2016",
+        "autor": "ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Aprovação",
+        "ementa": null,
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164384.pdf",
+            "arquivo": "prt20164384.pdf",
+            "baixado": true
+          }
+        ]
+      },
+      {
+        "numeracaoItem": "23.",
+        "titulo": "PRT - PORTARIA 4402/2016",
+        "autor": "SAF/ANEEL",
+        "material": "Legislação",
+        "esfera": "Esfera:Outros",
+        "situacao": "Situação:NÃO CONSTA REVOGAÇÃO EXPRESSA",
+        "assinatura": "Assinatura:29/12/2016",
+        "publicacao": "Publicação:30/12/2016",
+        "assunto": "Assunto:Prorrogação de prazo",
+        "ementa": null,
+        "pdfs": [
+          {
+            "tipo": "Texto Integral:",
+            "url": "http://www2.aneel.gov.br/cedoc/prt20164402.pdf",
+            "arquivo": "prt20164402.pdf",
+            "baixado": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,21 +1,77 @@
+import threading
 import requests
 import pytesseract
+from curl_cffi import requests as cf_requests
 from pathlib import Path
 from pdf2image import convert_from_path
 from docling.document_converter import DocumentConverter
 
 TMP_DIR = Path("/tmp")
+FLARESOLVERR_URL = "http://localhost:8191/v1"
+
 converter = DocumentConverter()
+
+_cf_lock = threading.Lock()
+_cf_cookies: dict = {}
+_cf_user_agent: str = ""
+
+
+def _renovar_cookies():
+    global _cf_cookies, _cf_user_agent
+    requests.post(FLARESOLVERR_URL, json={"cmd": "sessions.create", "session": "aneel"}, timeout=10)
+
+    requests.post(FLARESOLVERR_URL, json={
+        "cmd": "request.get",
+        "url": "https://www2.aneel.gov.br/",
+        "session": "aneel",
+        "maxTimeout": 60000,
+    }, timeout=90)
+
+    r = requests.post(FLARESOLVERR_URL, json={
+        "cmd": "request.get",
+        "url": "https://www2.aneel.gov.br/cedoc/dsp20163284.pdf",
+        "session": "aneel",
+        "maxTimeout": 60000,
+    }, timeout=90)
+    r.raise_for_status()
+
+    sol = r.json()["solution"]
+    _cf_cookies = {c["name"]: c["value"] for c in sol["cookies"]}
+    _cf_user_agent = sol["userAgent"]
+
+    requests.post(FLARESOLVERR_URL, json={"cmd": "sessions.destroy", "session": "aneel"}, timeout=10)
+
+
+def _obter_sessao() -> tuple[dict, str]:
+    if not _cf_cookies:
+        with _cf_lock:
+            if not _cf_cookies:
+                _renovar_cookies()
+    return _cf_cookies, _cf_user_agent
 
 
 def _baixar_pdf(url: str, destino: Path) -> bool:
-    try:
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
-        destino.write_bytes(response.content)
-        return True
-    except Exception:
-        return False
+    cookies, user_agent = _obter_sessao()
+    for tentativa in range(2):
+        try:
+            r = cf_requests.get(
+                url.replace("http://", "https://"),
+                cookies=cookies,
+                headers={"User-Agent": user_agent, "Referer": "https://www2.aneel.gov.br/"},
+                impersonate="chrome120",
+                timeout=30,
+            )
+            if r.status_code == 403 and tentativa == 0:
+                with _cf_lock:
+                    _renovar_cookies()
+                cookies, user_agent = _cf_cookies, _cf_user_agent
+                continue
+            if r.status_code == 200 and r.content[:4] == b"%PDF":
+                destino.write_bytes(r.content)
+                return True
+        except Exception:
+            pass
+    return False
 
 
 def _extrair_docling(caminho: Path) -> str:

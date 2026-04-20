@@ -2,6 +2,7 @@ docling
 pytesseract
 pdf2image
 requests
+curl-cffi
 psycopg2-binary
 sqlalchemy
 python-dotenv
