@@ -13,27 +13,22 @@ def carregar_registros() -> list[dict]:
 
         for _, conteudo in dados.items():
             for registro in conteudo.get("registros", []):
-                pdfs = registro.get("pdfs", [])
-                if not pdfs:
-                    continue
+                for pdf in registro.get("pdfs", []):
+                    if not pdf.get("url"):
+                        continue
 
-                pdf = pdfs[0]
-                if not pdf.get("url"):
-                    continue
-
-                registros.append({
-                    "titulo":   registro.get("titulo"),
-                    "autor":    registro.get("autor"),
-                    "assunto":  registro.get("assunto"),
-                    "situacao": registro.get("situacao"),
-                    "data_pub": registro.get("publicacao"),
-                    "ementa":   registro.get("ementa"),
-                    "url_pdf":  pdf["url"],
-                    "arquivo":  pdf.get("arquivo"),
-                })
+                    registros.append({
+                        "titulo":   registro.get("titulo"),
+                        "autor":    registro.get("autor"),
+                        "assunto":  registro.get("assunto"),
+                        "situacao": registro.get("situacao"),
+                        "data_pub": registro.get("publicacao"),
+                        "ementa":   registro.get("ementa"),
+                        "url_pdf":  pdf["url"],
+                        "arquivo":  pdf.get("arquivo"),
+                    })
 
     return registros
-
 
 if __name__ == "__main__":
     registros = carregar_registros()
