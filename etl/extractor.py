@@ -9,6 +9,8 @@ from docling.document_converter import DocumentConverter
 TMP_DIR = Path("/tmp")
 FLARESOLVERR_URL = "http://localhost:8191/v1"
 
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+
 converter = DocumentConverter()
 
 _cf_lock = threading.Lock()
