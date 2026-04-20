@@ -20,19 +20,22 @@ _cf_user_agent: str = ""
 
 def _renovar_cookies():
     global _cf_cookies, _cf_user_agent
-    requests.post(FLARESOLVERR_URL, json={"cmd": "sessions.create", "session": "aneel"}, timeout=10)
+    import uuid
+    session_id = f"aneel_{uuid.uuid4().hex[:8]}"
+
+    requests.post(FLARESOLVERR_URL, json={"cmd": "sessions.create", "session": session_id}, timeout=10)
 
     requests.post(FLARESOLVERR_URL, json={
         "cmd": "request.get",
         "url": "https://www2.aneel.gov.br/",
-        "session": "aneel",
+        "session": session_id,
         "maxTimeout": 60000,
     }, timeout=90)
 
     r = requests.post(FLARESOLVERR_URL, json={
         "cmd": "request.get",
         "url": "https://www2.aneel.gov.br/cedoc/dsp20163284.pdf",
-        "session": "aneel",
+        "session": session_id,
         "maxTimeout": 60000,
     }, timeout=90)
     r.raise_for_status()
@@ -41,7 +44,7 @@ def _renovar_cookies():
     _cf_cookies = {c["name"]: c["value"] for c in sol["cookies"]}
     _cf_user_agent = sol["userAgent"]
 
-    requests.post(FLARESOLVERR_URL, json={"cmd": "sessions.destroy", "session": "aneel"}, timeout=10)
+    requests.post(FLARESOLVERR_URL, json={"cmd": "sessions.destroy", "session": session_id}, timeout=10)
 
 
 def _obter_sessao() -> tuple[dict, str]:
