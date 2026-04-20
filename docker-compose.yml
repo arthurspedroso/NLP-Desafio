@@ -10,5 +10,14 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      LOG_LEVEL: info
+      TZ: America/Sao_Paulo
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+
 volumes:
   pgdata:
