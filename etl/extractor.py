@@ -1,3 +1,4 @@
+import os
 import threading
 import requests
 import pytesseract
@@ -9,7 +10,7 @@ from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 
 TMP_DIR = Path("/tmp")
-FLARESOLVERR_URL = "http://localhost:8191/v1"
+FLARESOLVERR_URL = os.getenv("FLARESOLVERR_URL", "http://localhost:8191/v1")
 
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
