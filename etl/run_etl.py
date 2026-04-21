@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from etl.loader import carregar_registros
-from etl.extractor import extrair
+from etl.extractor import extrair, _obter_sessao
 from etl.db import criar_tabela, ja_processado, salvar_registro
 
 
@@ -21,6 +21,10 @@ def main():
     if not pendentes:
         print("Nada a processar.")
         return
+
+    print("Aquecendo cookies do FlareSolverr...")
+    _obter_sessao()
+    print("Cookies prontos. Iniciando workers.")
 
     concluidos = ja_feitos
     with ThreadPoolExecutor(max_workers=12) as executor:
