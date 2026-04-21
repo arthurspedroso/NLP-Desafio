@@ -4,14 +4,23 @@ import pytesseract
 from curl_cffi import requests as cf_requests
 from pathlib import Path
 from pdf2image import convert_from_path
-from docling.document_converter import DocumentConverter
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions
 
 TMP_DIR = Path("/tmp")
 FLARESOLVERR_URL = "http://localhost:8191/v1"
 
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
-converter = DocumentConverter()
+_pipeline_options = PdfPipelineOptions()
+_pipeline_options.do_ocr = False
+
+converter = DocumentConverter(
+    format_options={
+        InputFormat.PDF: PdfFormatOption(pipeline_options=_pipeline_options)
+    }
+)
 
 _cf_lock = threading.Lock()
 _cf_cookies: dict = {}
