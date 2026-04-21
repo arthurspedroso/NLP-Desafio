@@ -67,16 +67,16 @@ def _obter_sessao() -> tuple[dict, str]:
 
 def _baixar_pdf(url: str, destino: Path) -> bool:
     cookies, user_agent = _obter_sessao()
-    for tentativa in range(2):
+    for tentativa in range(3):
         try:
             r = cf_requests.get(
                 url.replace("http://", "https://"),
                 cookies=cookies,
                 headers={"User-Agent": user_agent, "Referer": "https://www2.aneel.gov.br/"},
                 impersonate="chrome120",
-                timeout=30,
+                timeout=60,
             )
-            if r.status_code == 403 and tentativa == 0:
+            if r.status_code == 403 and tentativa < 2:
                 with _cf_lock:
                     _renovar_cookies()
                 cookies, user_agent = _cf_cookies, _cf_user_agent
