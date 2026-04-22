@@ -5,7 +5,7 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 
 
 def carregar_registros() -> list[dict]:
-    registros = []
+    vistos: dict[str, dict] = {}
 
     for arquivo in sorted(DATA_DIR.glob("*.json")):
         with open(arquivo, encoding="utf-8") as f:
@@ -14,21 +14,22 @@ def carregar_registros() -> list[dict]:
         for _, conteudo in dados.items():
             for registro in conteudo.get("registros", []):
                 for pdf in registro.get("pdfs", []):
-                    if not pdf.get("url"):
+                    url = pdf.get("url")
+                    if not url or url in vistos:
                         continue
 
-                    registros.append({
+                    vistos[url] = {
                         "titulo":   registro.get("titulo"),
                         "autor":    registro.get("autor"),
                         "assunto":  registro.get("assunto"),
                         "situacao": registro.get("situacao"),
                         "data_pub": registro.get("publicacao"),
                         "ementa":   registro.get("ementa"),
-                        "url_pdf":  pdf["url"],
+                        "url_pdf":  url,
                         "arquivo":  pdf.get("arquivo"),
-                    })
+                    }
 
-    return registros
+    return list(vistos.values())
 
 if __name__ == "__main__":
     registros = carregar_registros()
