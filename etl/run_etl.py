@@ -1,40 +1,93 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import argparse
+import logging
+import os
+import sys
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
+from etl.db import criar_tabela, resetar_fallbacks, salvar_batch, urls_processadas
+from etl.extractor import extrair
 from etl.loader import carregar_registros
-from etl.extractor import extrair, _obter_sessao
-from etl.db import criar_tabela, ja_processado, salvar_registro
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    stream=sys.stdout,
+)
+logger = logging.getLogger("etl")
 
 
-def processar(registro: dict) -> dict:
-    return extrair(registro)
+BATCH_SIZE = 50
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--retry-fallbacks",
+        action="store_true",
+        help="Marca registros com fonte=ementa_fallback ou erro como não processados e reprocessa.",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=os.cpu_count() or 4,
+        help="Número de processos worker (padrão: os.cpu_count()).",
+    )
+    args = parser.parse_args()
+
     criar_tabela()
 
+    if args.retry_fallbacks:
+        n = resetar_fallbacks()
+        logger.info("reset de %d registros com fallback/erro", n)
+
     todos = carregar_registros()
-    pendentes = [r for r in todos if not ja_processado(r["url_pdf"])]
+    processadas = urls_processadas()
+    pendentes = [r for r in todos if r["url_pdf"] not in processadas]
 
     total = len(todos)
-    ja_feitos = total - len(pendentes)
-    print(f"Total: {total} | Já processados: {ja_feitos} | Pendentes: {len(pendentes)}")
+    feitos = total - len(pendentes)
+    logger.info("total=%d feitos=%d pendentes=%d workers=%d", total, feitos, len(pendentes), args.workers)
 
     if not pendentes:
-        print("Nada a processar.")
+        logger.info("nada a processar")
         return
 
-    print("Aquecendo cookies do FlareSolverr...")
-    _obter_sessao()
-    print("Cookies prontos. Iniciando workers.")
+    batch: list[dict] = []
+    concluidos = feitos
+    contagem_fonte: dict[str, int] = {}
 
-    concluidos = ja_feitos
-    with ThreadPoolExecutor(max_workers=12) as executor:
-        futures = {executor.submit(processar, r): r for r in pendentes}
+    with ProcessPoolExecutor(max_workers=args.workers) as executor:
+        futures = {executor.submit(extrair, r): r for r in pendentes}
         for future in as_completed(futures):
-            resultado = future.result()
-            salvar_registro(resultado)
+            try:
+                resultado = future.result()
+            except Exception as e:
+                reg = futures[future]
+                logger.exception("worker falhou em %s: %s", reg.get("url_pdf"), e)
+                resultado = {
+                    **reg,
+                    "texto_bruto": None,
+                    "fonte": "erro",
+                    "erro": f"worker crash: {e}",
+                }
+
+            batch.append(resultado)
             concluidos += 1
-            status = resultado["fonte"]
-            print(f"[{concluidos}/{total}] {resultado.get('titulo')} — {status}")
+            fonte = resultado.get("fonte", "erro")
+            contagem_fonte[fonte] = contagem_fonte.get(fonte, 0) + 1
+
+            if concluidos % 20 == 0 or concluidos == total:
+                resumo = " ".join(f"{k}={v}" for k, v in sorted(contagem_fonte.items()))
+                logger.info("[%d/%d] %s", concluidos, total, resumo)
+
+            if len(batch) >= BATCH_SIZE:
+                salvar_batch(batch)
+                batch.clear()
+
+    if batch:
+        salvar_batch(batch)
+
+    logger.info("concluído. distribuição de fontes: %s", contagem_fonte)
 
 
 if __name__ == "__main__":

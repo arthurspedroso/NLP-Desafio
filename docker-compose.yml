@@ -10,29 +10,18 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:latest
-    environment:
-      LOG_LEVEL: info
-      TZ: America/Sao_Paulo
-    ports:
-      - "8191:8191"
-    restart: unless-stopped
-
   etl:
     build:
       context: .
       dockerfile: Dockerfile.etl
     depends_on:
       - postgres
-      - flaresolverr
     environment:
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_NAME: aneel_rag
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
-      FLARESOLVERR_URL: http://flaresolverr:8191/v1
     volumes:
       - ./data:/app/data
     profiles:

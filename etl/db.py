@@ -12,56 +12,78 @@ DATABASE_URL = (
     f"/{os.getenv('DATABASE_NAME', 'aneel_rag')}"
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 
 def criar_tabela():
     with engine.begin() as conn:
         conn.execute(text("""
             CREATE TABLE IF NOT EXISTS documents (
-                id          SERIAL PRIMARY KEY,
-                titulo      TEXT,
-                autor       TEXT,
-                assunto     TEXT,
-                situacao    TEXT,
-                data_pub    TEXT,
-                url_pdf     TEXT UNIQUE,
-                texto_bruto TEXT,
-                fonte       TEXT,
-                processado  BOOLEAN DEFAULT FALSE,
-                erro        TEXT
+                id           SERIAL PRIMARY KEY,
+                titulo       TEXT,
+                autor        TEXT,
+                assunto      TEXT,
+                situacao     TEXT,
+                data_pub     TEXT,
+                url_pdf      TEXT UNIQUE,
+                tipo_arquivo TEXT,
+                texto_bruto  TEXT,
+                fonte        TEXT,
+                processado   BOOLEAN DEFAULT FALSE,
+                erro         TEXT
             )
         """))
 
 
-def ja_processado(url: str) -> bool:
+def urls_processadas() -> set[str]:
     with engine.connect() as conn:
         result = conn.execute(
-            text("SELECT 1 FROM documents WHERE url_pdf = :url AND processado = TRUE"),
-            {"url": url}
+            text("SELECT url_pdf FROM documents WHERE processado = TRUE")
         )
-        return result.fetchone() is not None
+        return {row[0] for row in result}
 
 
-def salvar_registro(dados: dict):
+def salvar_batch(registros: list[dict]):
+    if not registros:
+        return
     with engine.begin() as conn:
         conn.execute(text("""
-            INSERT INTO documents (titulo, autor, assunto, situacao, data_pub, url_pdf, texto_bruto, fonte, processado, erro)
-            VALUES (:titulo, :autor, :assunto, :situacao, :data_pub, :url_pdf, :texto_bruto, :fonte, :processado, :erro)
+            INSERT INTO documents (
+                titulo, autor, assunto, situacao, data_pub,
+                url_pdf, tipo_arquivo, texto_bruto, fonte, processado, erro
+            ) VALUES (
+                :titulo, :autor, :assunto, :situacao, :data_pub,
+                :url_pdf, :tipo_arquivo, :texto_bruto, :fonte, :processado, :erro
+            )
             ON CONFLICT (url_pdf) DO UPDATE SET
-                texto_bruto = EXCLUDED.texto_bruto,
-                fonte       = EXCLUDED.fonte,
-                processado  = EXCLUDED.processado,
-                erro        = EXCLUDED.erro
-        """), {
-            "titulo":      dados.get("titulo"),
-            "autor":       dados.get("autor"),
-            "assunto":     dados.get("assunto"),
-            "situacao":    dados.get("situacao"),
-            "data_pub":    dados.get("data_pub"),
-            "url_pdf":     dados.get("url_pdf"),
-            "texto_bruto": dados.get("texto_bruto"),
-            "fonte":       dados.get("fonte"),
-            "processado":  dados.get("fonte") != "erro",
-            "erro":        dados.get("erro"),
-        })
+                texto_bruto  = EXCLUDED.texto_bruto,
+                fonte        = EXCLUDED.fonte,
+                tipo_arquivo = EXCLUDED.tipo_arquivo,
+                processado   = EXCLUDED.processado,
+                erro         = EXCLUDED.erro
+        """), [
+            {
+                "titulo":       r.get("titulo"),
+                "autor":        r.get("autor"),
+                "assunto":      r.get("assunto"),
+                "situacao":     r.get("situacao"),
+                "data_pub":     r.get("data_pub"),
+                "url_pdf":      r.get("url_pdf"),
+                "tipo_arquivo": r.get("tipo_arquivo"),
+                "texto_bruto":  r.get("texto_bruto"),
+                "fonte":        r.get("fonte"),
+                "processado":   r.get("fonte") != "erro",
+                "erro":         r.get("erro"),
+            }
+            for r in registros
+        ])
+
+
+def resetar_fallbacks():
+    with engine.begin() as conn:
+        result = conn.execute(text("""
+            UPDATE documents
+            SET processado = FALSE
+            WHERE fonte IN ('ementa_fallback', 'erro')
+        """))
+        return result.rowcount
