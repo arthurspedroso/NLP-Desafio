@@ -1,13 +1,17 @@
 import logging
 import tempfile
 import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as _FuturesTimeout
 from pathlib import Path
 
 import fitz
+import numpy as np
 import pytesseract
 from bs4 import BeautifulSoup
 from curl_cffi import requests as cf_requests
 from pdf2image import convert_from_path
+
+fitz.TOOLS.mupdf_display_errors(False)
 
 logger = logging.getLogger(__name__)
 
@@ -66,31 +70,37 @@ def _extrair_pdf_pymupdf(caminho: Path) -> tuple[str, str] | None:
     try:
         for page in doc:
             blocos = page.get_text("blocks", sort=True)
-            
-            textos_limpos = []
-            for b in blocos:
-                # b[6] é o tipo do bloco: 0 significa texto, 1 significa imagem
-                if b[6] == 0:
-                    # Pega o texto do bloco (b[4]), troca quebra de linha por espaço e remove espaços duplos
-                    texto_bloco = b[4].replace("\n", " ").strip()
-                    texto_bloco = " ".join(texto_bloco.split()) 
-                    
-                    if texto_bloco:
-                        textos_limpos.append(texto_bloco)
-            
-            # Junta os parágrafos com duas quebras de linha (perfeito para chunking)
-            texto_pagina = "\n\n".join(textos_limpos)
-            partes.append(texto_pagina)
 
             try:
                 tabelas = page.find_tables()
-                for tab in tabelas:
+                table_rects = [fitz.Rect(tab.bbox) for tab in tabelas]
+            except Exception:
+                tabelas = []
+                table_rects = []
+
+            textos_limpos = []
+            for b in blocos:
+                if b[6] != 0:
+                    continue
+                bloco_rect = fitz.Rect(b[:4])
+                if any(bloco_rect.intersects(tr) for tr in table_rects):
+                    continue
+                texto_bloco = b[4].replace("\n", " ").strip()
+                texto_bloco = " ".join(texto_bloco.split())
+                if texto_bloco:
+                    textos_limpos.append(texto_bloco)
+
+            texto_pagina = "\n\n".join(textos_limpos)
+            partes.append(texto_pagina)
+
+            for tab in tabelas:
+                try:
                     md = tab.to_markdown()
                     if md.strip():
                         partes.append("\n" + md + "\n")
                         tem_tabela = True
-            except Exception:
-                pass
+                except Exception:
+                    pass
 
         texto = "\n".join(partes)
         num_paginas = len(doc)
@@ -105,19 +115,40 @@ def _extrair_pdf_pymupdf(caminho: Path) -> tuple[str, str] | None:
 
 
 def _extrair_pdf_tesseract(caminho: Path) -> str | None:
+    nome = caminho.name
     try:
-        imagens = convert_from_path(str(caminho), dpi=200)
+        imagens = convert_from_path(str(caminho), dpi=150)
     except Exception as e:
-        logger.warning("pdf2image falhou em %s: %s", caminho, e)
+        logger.warning("pdf2image falhou em %s: %s", nome, e)
         return None
 
+    n_pags = len(imagens)
     partes = []
-    for img in imagens:
-        try:
-            t = pytesseract.image_to_string(img, lang="por", config="--oem 1 --psm 6")
-            partes.append(t)
-        except Exception as e:
-            logger.warning("tesseract falhou numa página de %s: %s", caminho, e)
+    inicio = time.time()
+    pool = ThreadPoolExecutor(max_workers=1)
+    try:
+        for i, img in enumerate(imagens, 1):
+            if time.time() - inicio > 600:
+                logger.warning("tesseract timeout total em %s (pág %d/%d)", nome, i, n_pags)
+                break
+
+            arr = np.array(img.convert("L"))
+            if (arr > 240).mean() > 0.99:
+                continue
+
+            fut = pool.submit(pytesseract.image_to_string, img, lang="por", config="--oem 1 --psm 6")
+            try:
+                t = fut.result(timeout=60)
+                partes.append(t)
+            except _FuturesTimeout:
+                logger.warning("tesseract timeout página %d/%d de %s", i, n_pags, nome)
+            except Exception as e:
+                logger.warning("tesseract falhou página %d/%d de %s: %s", i, n_pags, nome, e)
+
+            if i % 10 == 0:
+                logger.info("tesseract %s: %d/%d páginas (%.0fs)", nome, i, n_pags, time.time() - inicio)
+    finally:
+        pool.shutdown(wait=False)
 
     texto = "\n".join(partes)
     return texto if texto.strip() else None
@@ -193,24 +224,38 @@ def extrair(registro: dict) -> dict:
     ) as tmp:
         caminho = Path(tmp.name)
 
+    t_inicio = time.time()
     try:
-        if not _baixar(url, caminho):
+        t0 = time.time()
+        ok = _baixar(url, caminho)
+        logger.info("download %s: %.1fs", url, time.time() - t0)
+        if not ok:
             return _aplicar_fallback_ementa(resultado, registro, f"falha no download: {url}")
 
         if tipo == "pdf":
+            t0 = time.time()
             pymu = _extrair_pdf_pymupdf(caminho)
+            dt_pymu = time.time() - t0
             if pymu:
                 texto, fonte = pymu
+                logger.info("pymupdf %s: %.1fs, %d chars", url, dt_pymu, len(texto))
                 resultado["texto_bruto"] = texto
                 resultado["fonte"] = fonte
+                logger.info("total %s: %.1fs (%s)", url, time.time() - t_inicio, fonte)
                 return resultado
 
+            logger.info("pymupdf sem texto %s: %.1fs", url, dt_pymu)
+            t0 = time.time()
             tess = _extrair_pdf_tesseract(caminho)
+            dt_tess = time.time() - t0
             if tess:
+                logger.info("tesseract %s: %.1fs, %d chars", url, dt_tess, len(tess))
                 resultado["texto_bruto"] = tess
                 resultado["fonte"] = "tesseract"
+                logger.info("total %s: %.1fs (tesseract)", url, time.time() - t_inicio)
                 return resultado
 
+            logger.info("tesseract sem texto %s: %.1fs", url, dt_tess)
             return _aplicar_fallback_ementa(resultado, registro, "pymupdf e tesseract falharam")
 
         if tipo in ("html", "htm"):
@@ -218,6 +263,7 @@ def extrair(registro: dict) -> dict:
             if texto:
                 resultado["texto_bruto"] = texto
                 resultado["fonte"] = "html"
+                logger.info("total %s: %.1fs (html)", url, time.time() - t_inicio)
                 return resultado
             return _aplicar_fallback_ementa(resultado, registro, "parse html falhou")
 

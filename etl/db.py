@@ -28,18 +28,25 @@ def criar_tabela():
                 url_pdf      TEXT UNIQUE,
                 tipo_arquivo TEXT,
                 texto_bruto  TEXT,
+                texto_limpo  TEXT,
                 fonte        TEXT,
                 processado   BOOLEAN DEFAULT FALSE,
                 erro         TEXT
             )
         """))
+        conn.execute(text(
+            "ALTER TABLE documents ADD COLUMN IF NOT EXISTS texto_limpo TEXT"
+        ))
 
 
 def urls_processadas() -> set[str]:
     with engine.connect() as conn:
-        result = conn.execute(
-            text("SELECT url_pdf FROM documents WHERE processado = TRUE")
-        )
+        result = conn.execute(text("""
+            SELECT url_pdf FROM documents
+            WHERE texto_bruto IS NOT NULL
+              AND texto_bruto != ''
+              AND fonte != 'erro'
+        """))
         return {row[0] for row in result}
 
 
