@@ -65,7 +65,21 @@ def _extrair_pdf_pymupdf(caminho: Path) -> tuple[str, str] | None:
 
     try:
         for page in doc:
-            texto_pagina = page.get_text("text") or ""
+            blocos = page.get_text("blocks", sort=True)
+            
+            textos_limpos = []
+            for b in blocos:
+                # b[6] é o tipo do bloco: 0 significa texto, 1 significa imagem
+                if b[6] == 0:
+                    # Pega o texto do bloco (b[4]), troca quebra de linha por espaço e remove espaços duplos
+                    texto_bloco = b[4].replace("\n", " ").strip()
+                    texto_bloco = " ".join(texto_bloco.split()) 
+                    
+                    if texto_bloco:
+                        textos_limpos.append(texto_bloco)
+            
+            # Junta os parágrafos com duas quebras de linha (perfeito para chunking)
+            texto_pagina = "\n\n".join(textos_limpos)
             partes.append(texto_pagina)
 
             try:

@@ -1,4 +1,5 @@
 pymupdf
+pymupdf-layout
 beautifulsoup4
 pytesseract
 pdf2image
