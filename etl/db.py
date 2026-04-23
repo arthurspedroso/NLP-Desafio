@@ -46,6 +46,7 @@ def urls_processadas() -> set[str]:
             WHERE texto_bruto IS NOT NULL
               AND texto_bruto != ''
               AND fonte != 'erro'
+              AND processado = TRUE
         """))
         return {row[0] for row in result}
 
