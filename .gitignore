@@ -6,8 +6,11 @@ __pycache__/
 .venv/
 venv/
 
+*.dump
+
 # Claude
 .claude/
 
 # Postgres
 pgdata/
+
