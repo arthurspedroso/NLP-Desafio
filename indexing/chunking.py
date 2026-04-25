@@ -167,7 +167,7 @@ def filtrar_qualidade(chunks: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------
 # 6. Pipeline final
 # ---------------------------------------------------------------------------
-def processar_chunking(engine) -> dict[int, list[str]]:
+def processar_chunking(engine) -> dict[int, dict]:
     """
     Pipeline completo de chunking:
       1. Busca documentos no Postgres
@@ -177,8 +177,8 @@ def processar_chunking(engine) -> dict[int, list[str]]:
       5. Filtra chunks de baixa qualidade
 
     Retorna:
-        dict mapeando doc_id → lista de chunks
-        Exemplo: {1: ["chunk1...", "chunk2..."], 2: [...]}
+        dict mapeando doc_id → dict com titulo e chunks
+        Exemplo: {1: {"titulo": "...", "chunks": ["chunk1...", "chunk2..."]}}
     """
     documentos = buscar_documentos(engine)
 
@@ -186,7 +186,7 @@ def processar_chunking(engine) -> dict[int, list[str]]:
         logger.warning("Nenhum documento encontrado para chunking.")
         return {}
 
-    resultado: dict[int, list[str]] = {}
+    resultado: dict[int, dict] = {}
     total_chunks = 0
 
     for doc in documentos:
@@ -215,7 +215,7 @@ def processar_chunking(engine) -> dict[int, list[str]]:
         chunks = filtrar_qualidade(chunks)
 
         if chunks:
-            resultado[doc_id] = chunks
+            resultado[doc_id] = {"titulo": titulo, "chunks": chunks}
             total_chunks += len(chunks)
             logger.info(
                 "Doc %d (%s): %d seções → %d chunks",
@@ -247,11 +247,12 @@ if __name__ == "__main__":
     print(f"RESUMO DO CHUNKING")
     print(f"{'='*60}")
     print(f"Documentos processados: {len(resultado)}")
-    print(f"Total de chunks: {sum(len(c) for c in resultado.values())}")
+    print(f"Total de chunks: {sum(len(v['chunks']) for v in resultado.values())}")
     print()
 
     # Mostra amostra dos primeiros 3 documentos
-    for doc_id, chunks in list(resultado.items())[:3]:
+    for doc_id, info in list(resultado.items())[:3]:
+        chunks = info["chunks"]
         print(f"--- Doc {doc_id}: {len(chunks)} chunks ---")
         for i, chunk in enumerate(chunks[:2]):
             preview = chunk[:120].replace("\n", " ")
