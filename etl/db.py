@@ -8,7 +8,7 @@ DATABASE_URL = (
     f"postgresql://{os.getenv('DATABASE_USER', 'postgres')}"
     f":{os.getenv('DATABASE_PASSWORD', 'postgres')}"
     f"@{os.getenv('DATABASE_HOST', 'localhost')}"
-    f":{os.getenv('DATABASE_PORT', '5432')}"
+    f":{os.getenv('DATABASE_PORT', '5433')}"
     f"/{os.getenv('DATABASE_NAME', 'aneel_rag')}"
 )
 

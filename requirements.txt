@@ -6,3 +6,4 @@ pgvector
 python-dotenv
 google-generativeai
 tiktoken
+langchain-text-splitters
