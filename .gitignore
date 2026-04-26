@@ -14,3 +14,6 @@ venv/
 # Postgres
 pgdata/
 
+chunks_cache.json
+
+data/chroma_db/
