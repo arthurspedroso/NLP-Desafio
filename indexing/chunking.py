@@ -18,10 +18,9 @@ logger = logging.getLogger("chunking")
 
 TIKTOKEN_MODEL = "cl100k_base"
 CHUNK_SIZE_TOKENS = 256
-CHUNK_OVERLAP_TOKENS = 25
+CHUNK_OVERLAP_TOKENS = 50
 MIN_SECAO_TOKENS = 30
 MIN_CHUNK_TOKENS = 40
-MAX_SECAO_TOKENS = 1024
 
 _enc = tiktoken.get_encoding(TIKTOKEN_MODEL)
 
@@ -37,17 +36,24 @@ _RE_ARTIGO = re.compile(
     r"(?=(?:^|\n)\s*(?:Art(?:igo)?\.?\s*\d+[º°.]?))",
     re.IGNORECASE | re.MULTILINE,
 )
-_RE_SENTENCA = re.compile(r"(?<=[.!?;:])\s+(?=[A-ZÀ-Ú0-9])")
 
 def buscar_documentos(engine):
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT id, titulo, texto_limpo
+            SELECT id, titulo, autor, assunto, situacao, data_pub, texto_limpo
             FROM documents
             WHERE texto_limpo IS NOT NULL AND texto_limpo != ''
         """))
         return [
-            {"id": row[0], "titulo": row[1], "texto_limpo": row[2]}
+            {
+                "id": row[0],
+                "titulo": row[1],
+                "autor": row[2],
+                "assunto": row[3],
+                "situacao": row[4],
+                "data_pub": row[5],
+                "texto_limpo": row[6],
+            }
             for row in result
         ]
 
@@ -72,9 +78,6 @@ def _dividir_por_artigos(texto: str):
 
 def _dividir_por_paragrafos(texto: str):
     return [p.strip() for p in re.split(r"\n\s*\n", texto) if p.strip()]
-
-def _dividir_por_sentencas(texto: str):
-    return [p.strip() for p in _RE_SENTENCA.split(texto) if p.strip()]
 
 def dividir_por_secoes(texto: str):
     secoes = _dividir_por_artigos(texto) or _dividir_por_paragrafos(texto)
@@ -110,13 +113,30 @@ def filtrar_qualidade(chunks):
             chunks_dedup.append(chunk)
     return chunks_dedup
 
+def _prefixar_chunk(chunk: str, titulo: str) -> str:
+    return f"[Documento: {titulo}]\n{chunk}"
+
 def processar_doc(doc):
     doc_id = doc["id"]
-    titulo = doc["titulo"]
+    titulo = doc["titulo"] or ""
+    autor = doc["autor"] or ""
+    assunto = doc["assunto"] or ""
+    situacao = doc["situacao"] or ""
+    data_pub = doc["data_pub"] or ""
+
     texto_limpo = limpar_texto(doc["texto_limpo"])
     secoes = dividir_por_secoes(texto_limpo)
-    chunks = filtrar_qualidade(gerar_chunks(secoes))
-    return doc_id, {"titulo": titulo, "chunks": chunks}
+    chunks_raw = filtrar_qualidade(gerar_chunks(secoes))
+    chunks = [_prefixar_chunk(c, titulo) for c in chunks_raw]
+
+    return doc_id, {
+        "titulo": titulo,
+        "autor": autor,
+        "assunto": assunto,
+        "situacao": situacao,
+        "data_pub": data_pub,
+        "chunks": chunks,
+    }
 
 def processar_chunking(engine):
     documentos = buscar_documentos(engine)

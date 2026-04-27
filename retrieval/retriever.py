@@ -5,12 +5,10 @@ from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunct
 
 
 class ANEELRetriever:
-    def __init__(self, chroma_path=None, collection_name="aneel_docs"):
-        if chroma_path is None:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            chroma_path = os.path.join(base_dir, "data", "chroma_db")
-
-        self.client = chromadb.PersistentClient(path=chroma_path)
+    def __init__(self, collection_name="aneel_docs"):
+        chroma_host = os.getenv("CHROMA_HOST", "localhost")
+        chroma_port = int(os.getenv("CHROMA_PORT", "8001"))
+        self.client = chromadb.HttpClient(host=chroma_host, port=chroma_port)
 
         self.embedding_function = SentenceTransformerEmbeddingFunction(
             model_name="all-MiniLM-L6-v2"

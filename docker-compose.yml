@@ -10,6 +10,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./data/chroma_db:/chroma/chroma
+
   etl:
     build:
       context: .
@@ -26,6 +33,39 @@ services:
       - ./data:/app/data
     profiles:
       - etl
+
+  indexing:
+    build:
+      context: .
+      dockerfile: Dockerfile.indexing
+    depends_on:
+      - postgres
+      - chromadb
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: aneel_rag
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+    volumes:
+      - ./data:/app/data
+    profiles:
+      - indexing
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - chromadb
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      CHROMA_HOST: ${CHROMA_HOST:-chromadb}
+      CHROMA_PORT: ${CHROMA_PORT:-8000}
 
 volumes:
   pgdata:

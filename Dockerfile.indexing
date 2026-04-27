@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# pre-baixa o modelo durante o build para não precisar baixar em runtime
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
+COPY etl/ ./etl/
+COPY indexing/ ./indexing/
+
+CMD ["python", "-m", "indexing.embeddings"]

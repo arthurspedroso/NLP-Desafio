@@ -2,9 +2,9 @@ fastapi
 uvicorn
 sqlalchemy
 psycopg2-binary
-pgvector
 python-dotenv
-google-generativeai
+google-genai
 tiktoken
 langchain-text-splitters
 chromadb
+sentence-transformers
