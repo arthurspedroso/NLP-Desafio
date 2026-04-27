@@ -1,5 +1,7 @@
 import os
+import time
 from google import genai
+from google.genai import errors
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,7 +13,6 @@ class ANEELGenerator:
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found in environment variables.")
 
-        # NOVA API
         self.client = genai.Client(api_key=api_key)
         self.model_name = model_name
 
@@ -27,8 +28,8 @@ class ANEELGenerator:
         prompt = f"""
 Você é um assistente especializado na legislação da ANEEL (Agência Nacional de Energia Elétrica).
 
-Use o contexto abaixo para responder.
-Se não estiver no contexto, diga que não sabe.
+Use o contexto abaixo para responder de forma clara e objetiva.
+Se a resposta não estiver no contexto, diga que não sabe.
 
 CONTEXTO:
 {context_text}
@@ -39,12 +40,40 @@ PERGUNTA:
 RESPOSTA:
 """
 
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=prompt
-        )
+        retries = 5
+        delay = 2
 
-        return response.text
+        for attempt in range(retries):
+            try:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt,
+                    config={
+                        "temperature": 0.2,
+                        "max_output_tokens": 512,
+                    }
+                )
+
+                return response.text.strip()
+
+            except errors.ServerError as e:
+                error_msg = str(e)
+
+                if "503" in error_msg or "UNAVAILABLE" in error_msg:
+                    print(
+                        f"[Tentativa {attempt+1}/{retries}] "
+                        f"Modelo sobrecarregado. Retry em {delay}s..."
+                    )
+                    time.sleep(delay)
+                    delay *= 2
+                else:
+                    raise e
+
+            except Exception as e:
+                print(f"Erro inesperado: {e}")
+                return f"Erro inesperado ao gerar resposta: {str(e)}"
+
+        return "O modelo está temporariamente indisponível. Tente novamente em alguns segundos."
 
 
 if __name__ == "__main__":

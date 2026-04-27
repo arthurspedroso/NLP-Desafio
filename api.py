@@ -30,18 +30,31 @@ def root():
 
 @app.post("/ask")
 def ask(q: Question):
-    chunks = retriever.retrieve(q.question)
-    answer = generator.generate_answer(q.question, chunks)
+    try:
+        # Retrieval
+        chunks = retriever.retrieve(q.question)
 
-    sources = []
-    for c in chunks:
-        sources.append({
-            "document": c["metadata"].get("document_name", "Documento desconhecido"),
-            "distance": c["distance"]
-        })
+        # Geração
+        answer = generator.generate_answer(q.question, chunks)
 
-    return {
-        "question": q.question,
-        "answer": answer,
-        "sources": sources
-    }
+        # Fontes
+        sources = []
+        for c in chunks:
+            sources.append({
+                "document": c["metadata"].get("document_name", "Documento desconhecido"),
+                "distance": c.get("distance", None)
+            })
+
+        return {
+            "question": q.question,
+            "answer": answer,
+            "sources": sources
+        }
+
+    except Exception as e:
+        return {
+            "question": q.question,
+            "answer": "Erro interno ao processar a pergunta.",
+            "error": str(e),
+            "sources": []
+        }

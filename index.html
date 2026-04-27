@@ -1,164 +1,230 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANEEL IA Assistant</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e3a8a);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANEEL AI Assistant</title>
 
-        .container {
-            width: 800px;
-            background: white;
-            color: #111;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-            padding: 30px;
-        }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
 
-        h1 {
-            text-align: center;
-            color: #1e3a8a;
-            margin-bottom: 5px;
-        }
+    body {
+      background: linear-gradient(135deg, #0b1120, #111827);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 20px;
+    }
 
-        p.subtitle {
-            text-align: center;
-            color: #666;
-            margin-top: 0;
-        }
+    .container {
+      width: 900px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
 
-        textarea {
-            width: 100%;
-            height: 80px;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            resize: none;
-            margin-top: 10px;
-        }
+    .header {
+      padding: 30px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+    }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 12px;
-            background: #2563eb;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-        }
+    .header h1 {
+      font-size: 32px;
+      font-weight: bold;
+    }
 
-        button:hover {
-            background: #1d4ed8;
-        }
+    .header p {
+      margin-top: 8px;
+      font-size: 15px;
+      opacity: 0.9;
+    }
 
-        .examples {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #444;
-        }
+    .content {
+      padding: 30px;
+    }
 
-        .example-btn {
-            display: inline-block;
-            background: #eef2ff;
-            color: #1e3a8a;
-            padding: 6px 10px;
-            margin: 4px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      border: none;
+      outline: none;
+      resize: none;
+      border-radius: 14px;
+      padding: 18px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
 
-        .response-box {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            background: #f9fafb;
-            min-height: 80px;
-            white-space: pre-wrap;
-        }
+    textarea::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
 
-        .sources {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #555;
-        }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-        .loading {
-            color: #2563eb;
-            font-weight: bold;
-        }
-    </style>
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(37,99,235,0.4);
+    }
+
+    .examples {
+      margin-top: 18px;
+    }
+
+    .examples span {
+      display: inline-block;
+      margin: 6px 6px 0 0;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .examples span:hover {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .response-box {
+      margin-top: 25px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 20px;
+      min-height: 120px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .sources {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #d1d5db;
+    }
+
+    .source-card {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .loading {
+      color: #60a5fa;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <h1>Consulta Inteligente ANEEL</h1>
-    <p class="subtitle">Pergunte sobre normas, resoluções e regulamentações</p>
 
-    <textarea id="question" placeholder="Digite sua pergunta..."></textarea>
-    <button onclick="askQuestion()">Perguntar</button>
+<div class="container">
+  <div class="header">
+    <h1>⚡ ANEEL AI Assistant</h1>
+    <p>Consulta inteligente à legislação e regulamentações do setor elétrico brasileiro</p>
+  </div>
+
+  <div class="content">
+    <textarea id="question" placeholder="Digite sua pergunta sobre normas, resoluções ou artigos da ANEEL..."></textarea>
+
+    <button onclick="askQuestion()">Perguntar à IA</button>
 
     <div class="examples">
-        Exemplos:
-        <span class="example-btn" onclick="fillQuestion('O que é microgeração distribuída?')">Microgeração</span>
-        <span class="example-btn" onclick="fillQuestion('Quais são as regras para conexão?')">Conexão</span>
-        <span class="example-btn" onclick="fillQuestion('O que são bandeiras tarifárias?')">Bandeiras tarifárias</span>
+      <span onclick="fillQuestion('Quais são as regras para conexão de microgeração distribuída?')">Regras de conexão</span>
+      <span onclick="fillQuestion('Quem custeia melhorias no sistema de distribuição?')">Custeio</span>
+      <span onclick="fillQuestion('Qual o prazo para celebração de aditivos contratuais?')">Prazos</span>
     </div>
 
-    <div class="response-box" id="response">A resposta aparecerá aqui...</div>
+    <div class="response-box" id="response">
+      A resposta da IA aparecerá aqui...
+    </div>
+
     <div class="sources" id="sources"></div>
+  </div>
+
+  <div class="footer">
+    Developed by Isadora Costa, Arthur Pedroso e Nathália Helen
+  </div>
 </div>
 
 <script>
-    function fillQuestion(text) {
-        document.getElementById("question").value = text;
-    }
+  function fillQuestion(text) {
+    document.getElementById("question").value = text;
+  }
 
-    async function askQuestion() {
-        const question = document.getElementById("question").value;
-        const responseBox = document.getElementById("response");
-        const sourcesBox = document.getElementById("sources");
+  async function askQuestion() {
+    const question = document.getElementById("question").value;
+    const responseBox = document.getElementById("response");
+    const sourcesBox = document.getElementById("sources");
 
-        responseBox.innerHTML = '<span class="loading">Consultando base da ANEEL...</span>';
-        sourcesBox.innerHTML = "";
+    responseBox.innerHTML = '<span class="loading">Consultando base da ANEEL...</span>';
+    sourcesBox.innerHTML = "";
 
-        try {
-            const res = await fetch("http://127.0.0.1:8000/ask", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ question })
-            });
+    try {
+      const res = await fetch("http://127.0.0.1:8000/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ question })
+      });
 
-            const data = await res.json();
+      const data = await res.json();
 
-            responseBox.innerText = data.answer || "Sem resposta.";
+      responseBox.innerText = data.answer || "Sem resposta.";
 
-            if (data.sources && data.sources.length > 0) {
-                sourcesBox.innerHTML = "<b>Fontes consultadas:</b><br>" +
-                    data.sources
-                        .filter(s => s.document !== "Documento desconhecido")
-                        .map(s =>
-                            `• ${s.document} (score: ${s.distance.toFixed(3)})`
-                        ).join("<br>");
-            }
-        } catch (error) {
-            responseBox.innerText = "Erro ao consultar API.";
-            console.error(error);
+      if (data.sources && data.sources.length > 0) {
+        const filtered = data.sources.filter(s => s.document !== "Documento desconhecido");
+
+        if (filtered.length > 0) {
+          sourcesBox.innerHTML = "<b>Fontes consultadas:</b>";
+
+          filtered.forEach(s => {
+            sourcesBox.innerHTML += `
+              <div class="source-card">
+                📄 ${s.document}<br>
+                Similaridade: ${(1 - s.distance).toFixed(3)}
+              </div>
+            `;
+          });
         }
+      }
+
+    } catch (error) {
+      responseBox.innerText = "Erro ao consultar API.";
+      console.error(error);
     }
+  }
 </script>
+
 </body>
 </html>

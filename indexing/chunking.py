@@ -45,6 +45,7 @@ def buscar_documentos(engine):
             SELECT id, titulo, texto_limpo
             FROM documents
             WHERE texto_limpo IS NOT NULL AND texto_limpo != ''
+                                   
         """))
         return [
             {"id": row[0], "titulo": row[1], "texto_limpo": row[2]}
