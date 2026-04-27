@@ -3,9 +3,9 @@ import logging
 import sys
 import json
 import time
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import chromadb
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from dotenv import load_dotenv
 
 from etl.db import engine
@@ -22,20 +22,45 @@ load_dotenv()
 
 BATCH_SIZE = 200
 
+# globais por processo worker — carregados uma vez no inicializar_worker
+_model = None
+_collection = None
+
 
 def dividir_lista(lista, tamanho):
     for i in range(0, len(lista), tamanho):
         yield lista[i:i + tamanho]
 
 
+def inicializar_worker(host, port):
+    """Roda uma única vez por processo worker ao iniciar o pool."""
+    global _model, _collection
+    from sentence_transformers import SentenceTransformer
+    _model = SentenceTransformer("all-MiniLM-L6-v2")
+    client = chromadb.HttpClient(host=host, port=port)
+    _collection = client.get_collection("aneel_docs")
+
+
+def processar_lote(lote):
+    """Chamado em cada worker: encode + upsert de um lote."""
+    texts, metadatas, ids = lote
+    try:
+        embeddings = _model.encode(
+            texts, batch_size=64, show_progress_bar=False
+        ).tolist()
+        _collection.upsert(
+            embeddings=embeddings,
+            documents=texts,
+            metadatas=metadatas,
+            ids=ids,
+        )
+        return (len(ids), 0)
+    except Exception:
+        return (0, len(texts))
+
+
 def criar_collection(client):
-    embedding_function = SentenceTransformerEmbeddingFunction(
-        model_name="all-MiniLM-L6-v2"
-    )
-    return client.get_or_create_collection(
-        name="aneel_docs",
-        embedding_function=embedding_function
-    )
+    return client.get_or_create_collection(name="aneel_docs")
 
 
 def _ids_ja_indexados(collection) -> set:
@@ -60,7 +85,6 @@ def gerar_e_salvar_embeddings():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_dir = os.path.join(base_dir, "data")
     cache_path = os.path.join(data_dir, "chunks_cache.json")
-
     os.makedirs(data_dir, exist_ok=True)
 
     chroma_host = os.getenv("CHROMA_HOST", "chromadb")
@@ -88,14 +112,10 @@ def gerar_e_salvar_embeddings():
             json.dump(documentos_chunks, f, ensure_ascii=False)
         logger.info("Cache salvo em %s", cache_path)
 
-    total_docs = len(documentos_chunks)
-    total_chunks = 0
-    total_erros = 0
+    lotes = []
     pulados = 0
 
-    logger.info("Total de documentos a indexar: %d", total_docs)
-
-    for idx, (doc_id, info) in enumerate(documentos_chunks.items(), start=1):
+    for doc_id, info in documentos_chunks.items():
         if str(doc_id) in ids_indexados:
             pulados += 1
             continue
@@ -125,19 +145,51 @@ def gerar_e_salvar_embeddings():
             dividir_lista(metadatas, BATCH_SIZE),
             dividir_lista(ids, BATCH_SIZE),
         ):
+            lotes.append((docs_b, meta_b, ids_b))
+
+    if pulados:
+        logger.info("%d documentos pulados (já indexados)", pulados)
+
+    total_lotes = len(lotes)
+    logger.info("Total de lotes a processar: %d", total_lotes)
+
+    if total_lotes == 0:
+        logger.info("Nada a indexar. Tudo já está no ChromaDB.")
+        return
+
+    num_workers = min(8, max(1, (os.cpu_count() or 4) - 2))
+    logger.info("Usando %d workers paralelos", num_workers)
+
+    total_chunks = 0
+    total_erros = 0
+    concluidos = 0
+
+    with ProcessPoolExecutor(
+        max_workers=num_workers,
+        initializer=inicializar_worker,
+        initargs=(chroma_host, chroma_port),
+    ) as executor:
+        futures = [executor.submit(processar_lote, lote) for lote in lotes]
+
+        for future in as_completed(futures):
+            concluidos += 1
             try:
-                collection.upsert(documents=docs_b, metadatas=meta_b, ids=ids_b)
-                total_chunks += len(docs_b)
+                sucesso, erros = future.result()
+                total_chunks += sucesso
+                total_erros += erros
             except Exception as e:
-                logger.warning("Erro no doc %s: %s", doc_id, e, exc_info=True)
+                logger.warning("Lote falhou: %s", e, exc_info=True)
                 total_erros += 1
 
-        if idx % 100 == 0:
-            logger.info("[%d/%d] %d chunks inseridos, %d erros", idx, total_docs, total_chunks, total_erros)
+            if concluidos % 100 == 0:
+                logger.info(
+                    "[%d/%d lotes] %d chunks inseridos, %d erros",
+                    concluidos, total_lotes, total_chunks, total_erros,
+                )
 
     elapsed = time.time() - t_inicio
     logger.info(
-        "Finalizado em %.1fs — %d chunks inseridos, %d docs pulados (já indexados), %d erros.",
+        "Finalizado em %.1fs — %d chunks inseridos, %d docs pulados, %d erros.",
         elapsed, total_chunks, pulados, total_erros,
     )
 
