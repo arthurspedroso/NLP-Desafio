@@ -134,7 +134,7 @@
         sourcesBox.innerHTML = "";
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/ask", {
+            const res = await fetch("http://127.0.0.1:8000/query", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -149,9 +149,9 @@
             if (data.sources && data.sources.length > 0) {
                 sourcesBox.innerHTML = "<b>Fontes consultadas:</b><br>" +
                     data.sources
-                        .filter(s => s.document !== "Documento desconhecido")
+                        .filter(s => s.metadata && s.metadata.titulo)
                         .map(s =>
-                            `• ${s.document} (score: ${s.distance.toFixed(3)})`
+                            `• ${s.metadata.titulo} (score: ${s.distance.toFixed(3)})`
                         ).join("<br>");
             }
         } catch (error) {
