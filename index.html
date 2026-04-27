@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANEEL RAG</title>
+    <title>ANEEL IA Assistant</title>
     <style>
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f7fa;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,36 +17,45 @@
         }
 
         .container {
+            width: 800px;
             background: white;
-            width: 700px;
+            color: #111;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
         }
 
         h1 {
             text-align: center;
             color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-top: 0;
         }
 
         textarea {
             width: 100%;
             height: 80px;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
+            padding: 12px;
             font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            resize: none;
+            margin-top: 10px;
         }
 
         button {
-            margin-top: 15px;
             width: 100%;
-            padding: 12px;
+            padding: 14px;
+            margin-top: 12px;
             background: #2563eb;
-            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
+            color: white;
             font-size: 18px;
             cursor: pointer;
         }
@@ -53,11 +64,28 @@
             background: #1d4ed8;
         }
 
-        .response {
-            margin-top: 20px;
-            background: #f9fafb;
-            padding: 15px;
+        .examples {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .example-btn {
+            display: inline-block;
+            background: #eef2ff;
+            color: #1e3a8a;
+            padding: 6px 10px;
+            margin: 4px;
             border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .response-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f9fafb;
+            min-height: 80px;
             white-space: pre-wrap;
         }
 
@@ -66,56 +94,71 @@
             font-size: 14px;
             color: #555;
         }
+
+        .loading {
+            color: #2563eb;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Consulta Inteligente ANEEL</h1>
+<div class="container">
+    <h1>Consulta Inteligente ANEEL</h1>
+    <p class="subtitle">Pergunte sobre normas, resoluções e regulamentações</p>
 
-        <textarea id="question" placeholder="Digite sua pergunta..."></textarea>
-        <button onclick="askQuestion()">Perguntar</button>
+    <textarea id="question" placeholder="Digite sua pergunta..."></textarea>
+    <button onclick="askQuestion()">Perguntar</button>
 
-        <div class="response" id="response">A resposta aparecerá aqui...</div>
-        <div class="sources" id="sources"></div>
+    <div class="examples">
+        Exemplos:
+        <span class="example-btn" onclick="fillQuestion('O que é microgeração distribuída?')">Microgeração</span>
+        <span class="example-btn" onclick="fillQuestion('Quais são as regras para conexão?')">Conexão</span>
+        <span class="example-btn" onclick="fillQuestion('O que são bandeiras tarifárias?')">Bandeiras tarifárias</span>
     </div>
 
-    <script>
-        async function askQuestion() {
-            const question = document.getElementById("question").value;
-            const responseBox = document.getElementById("response");
-            const sourcesBox = document.getElementById("sources");
+    <div class="response-box" id="response">A resposta aparecerá aqui...</div>
+    <div class="sources" id="sources"></div>
+</div>
 
-            responseBox.innerText = "Consultando...";
-            sourcesBox.innerHTML = "";
+<script>
+    function fillQuestion(text) {
+        document.getElementById("question").value = text;
+    }
 
-            try {
-                const res = await fetch("http://127.0.0.1:8000/ask", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ question })
-                });
+    async function askQuestion() {
+        const question = document.getElementById("question").value;
+        const responseBox = document.getElementById("response");
+        const sourcesBox = document.getElementById("sources");
 
-                const data = await res.json();
+        responseBox.innerHTML = '<span class="loading">Consultando base da ANEEL...</span>';
+        sourcesBox.innerHTML = "";
 
-                responseBox.innerText = data.answer;
+        try {
+            const res = await fetch("http://127.0.0.1:8000/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ question })
+            });
 
-                if (data.sources && data.sources.length > 0) {
-                    sourcesBox.innerHTML =
-                        "<b>Fontes:</b><br>" +
-                        data.sources.map(s =>
-                            `• ${s.document} (score: ${s.distance.toFixed(4)})`
+            const data = await res.json();
+
+            responseBox.innerText = data.answer || "Sem resposta.";
+
+            if (data.sources && data.sources.length > 0) {
+                sourcesBox.innerHTML = "<b>Fontes consultadas:</b><br>" +
+                    data.sources
+                        .filter(s => s.document !== "Documento desconhecido")
+                        .map(s =>
+                            `• ${s.document} (score: ${s.distance.toFixed(3)})`
                         ).join("<br>");
-                } else {
-                    sourcesBox.innerHTML = "Sem fontes retornadas.";
-                }
-
-            } catch (error) {
-                responseBox.innerText = "Erro ao consultar API.";
-                console.error(error);
             }
+        } catch (error) {
+            responseBox.innerText = "Erro ao consultar API.";
+            console.error(error);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
