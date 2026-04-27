@@ -1,4 +1,5 @@
 import os
+import re
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
@@ -11,7 +12,6 @@ class ANEELRetriever:
 
         self.client = chromadb.PersistentClient(path=chroma_path)
 
-        # Mesmo modelo usado no indexing
         self.embedding_function = SentenceTransformerEmbeddingFunction(
             model_name="all-MiniLM-L6-v2"
         )
@@ -21,11 +21,13 @@ class ANEELRetriever:
             embedding_function=self.embedding_function
         )
 
+    def _normalize(self, text):
+        return re.sub(r"\s+", " ", text.lower()).strip()
+
     def retrieve(self, query: str, k: int = 5):
-        # busca mais resultados para filtrar melhor
         results = self.collection.query(
             query_texts=[query],
-            n_results=10
+            n_results=12
         )
 
         seen = set()
@@ -36,18 +38,26 @@ class ANEELRetriever:
             metadata = results["metadatas"][0][i]
             distance = results["distances"][0][i]
 
-            # chave para evitar duplicados
-            key = content[:300].strip()
+            # filtra resultados ruins
+            if distance > 0.45:
+                continue
 
-            if key not in seen:
-                seen.add(key)
-                chunks.append({
-                    "content": content,
-                    "metadata": metadata,
-                    "distance": distance
-                })
+            normalized = self._normalize(content)
 
-            # para quando atingir k únicos
+            # remove duplicados fortes
+            key = normalized[:400]
+
+            if key in seen:
+                continue
+
+            seen.add(key)
+
+            chunks.append({
+                "content": content,
+                "metadata": metadata,
+                "distance": distance
+            })
+
             if len(chunks) >= k:
                 break
 
