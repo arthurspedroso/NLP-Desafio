@@ -20,7 +20,7 @@ logger = logging.getLogger("embeddings")
 
 load_dotenv()
 
-BATCH_SIZE = 200
+BATCH_SIZE = 500
 
 # globais por processo worker — carregados uma vez no inicializar_worker
 _model = None
@@ -157,7 +157,7 @@ def gerar_e_salvar_embeddings():
         logger.info("Nada a indexar. Tudo já está no ChromaDB.")
         return
 
-    num_workers = min(8, max(1, (os.cpu_count() or 4) - 2))
+    num_workers = min(20, max(1, (os.cpu_count() or 4) - 4))
     logger.info("Usando %d workers paralelos", num_workers)
 
     total_chunks = 0
