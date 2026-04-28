@@ -112,7 +112,9 @@ def gerar_e_salvar_embeddings():
             json.dump(documentos_chunks, f, ensure_ascii=False)
         logger.info("Cache salvo em %s", cache_path)
 
-    lotes = []
+    all_documents = []
+    all_metadatas = []
+    all_ids = []
     pulados = 0
 
     for doc_id, info in documentos_chunks.items():
@@ -127,10 +129,9 @@ def gerar_e_salvar_embeddings():
         data_pub = info.get("data_pub", "")
         chunks = info["chunks"]
 
-        documents, metadatas, ids = [], [], []
         for i, chunk in enumerate(chunks):
-            documents.append(chunk)
-            metadatas.append({
+            all_documents.append(chunk)
+            all_metadatas.append({
                 "doc_id": str(doc_id),
                 "titulo": titulo,
                 "autor": autor,
@@ -138,14 +139,13 @@ def gerar_e_salvar_embeddings():
                 "situacao": situacao,
                 "data_pub": data_pub,
             })
-            ids.append(f"doc_{doc_id}_chunk_{i}")
+            all_ids.append(f"doc_{doc_id}_chunk_{i}")
 
-        for docs_b, meta_b, ids_b in zip(
-            dividir_lista(documents, BATCH_SIZE),
-            dividir_lista(metadatas, BATCH_SIZE),
-            dividir_lista(ids, BATCH_SIZE),
-        ):
-            lotes.append((docs_b, meta_b, ids_b))
+    lotes = list(zip(
+        dividir_lista(all_documents, BATCH_SIZE),
+        dividir_lista(all_metadatas, BATCH_SIZE),
+        dividir_lista(all_ids, BATCH_SIZE),
+    ))
 
     if pulados:
         logger.info("%d documentos pulados (já indexados)", pulados)
