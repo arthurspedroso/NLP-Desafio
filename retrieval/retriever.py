@@ -31,7 +31,7 @@ class ANEELRetriever:
             distance = results["distances"][0][i]
 
             # filtra resultados ruins
-            if distance > 0.45:
+            if distance > 1.5:
                 continue
 
             normalized = self._normalize(content)
