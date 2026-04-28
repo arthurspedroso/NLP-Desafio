@@ -12,6 +12,9 @@ services:
 
   chromadb:
     image: chromadb/chroma:latest
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
     ports:
       - "8001:8000"
     volumes:
