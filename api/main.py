@@ -1,6 +1,8 @@
 import os
 import sys
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -11,6 +13,13 @@ from retrieval.retriever import ANEELRetriever
 from generation.generator import ANEELGenerator
 
 app = FastAPI(title="ANEEL RAG API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Initialize components
 retriever = ANEELRetriever()
@@ -32,6 +41,9 @@ class QueryResponse(BaseModel):
 
 @app.get("/")
 def read_root():
+    index_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
     return {"message": "ANEEL RAG API is running"}
 
 @app.post("/query", response_model=QueryResponse)

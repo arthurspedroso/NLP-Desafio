@@ -1,7 +1,7 @@
 import os
 import re
 import chromadb
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from sentence_transformers import SentenceTransformer
 
 
 class ANEELRetriever:
@@ -9,22 +9,16 @@ class ANEELRetriever:
         chroma_host = os.getenv("CHROMA_HOST", "localhost")
         chroma_port = int(os.getenv("CHROMA_PORT", "8001"))
         self.client = chromadb.HttpClient(host=chroma_host, port=chroma_port)
-
-        self.embedding_function = SentenceTransformerEmbeddingFunction(
-            model_name="all-MiniLM-L6-v2"
-        )
-
-        self.collection = self.client.get_collection(
-            name=collection_name,
-            embedding_function=self.embedding_function
-        )
+        self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.collection = self.client.get_collection(name=collection_name)
 
     def _normalize(self, text):
         return re.sub(r"\s+", " ", text.lower()).strip()
 
     def retrieve(self, query: str, k: int = 5):
+        query_embedding = self.model.encode(query).tolist()
         results = self.collection.query(
-            query_texts=[query],
+            query_embeddings=[query_embedding],
             n_results=12
         )
 
